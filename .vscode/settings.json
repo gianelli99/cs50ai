@@ -1,3 +1,5 @@
 {
-  "editor.defaultFormatter": "ms-python.python"
+  "editor.defaultFormatter": "ms-python.python",
+  "python.linting.pylintEnabled": true,
+  "python.linting.enabled": true
 }

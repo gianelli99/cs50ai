@@ -1,7 +1,7 @@
 import csv
 import sys
 
-from util import Node, StackFrontier, QueueFrontier
+from util import Node, QueueFrontier
 
 # Maps names to a set of corresponding person_ids
 names = {}
@@ -91,9 +91,53 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
+    states_explored_count = 0
+    result = []
+    start_node = Node(state=source, action=None, parent=None)
+    # I need a QueueFrontier because I want the optimal solution
+    frontier = QueueFrontier()
+    frontier.add(start_node)
+    expored_states = set()
 
-    # TODO
-    raise NotImplementedError
+    while not frontier.empty():
+
+        node = frontier.remove()
+        states_explored_count += 1
+
+        # Is this node a goal state?
+        if node.state == target:
+            # found the solution
+            movies_ids = []
+            people_ids = []
+
+            current_node = node
+            while current_node.parent is not None:
+                movies_ids.append(current_node.action)
+                people_ids.append(current_node.state)
+                current_node = current_node.parent
+
+            movies_ids.reverse()
+            people_ids.reverse()
+            for i in range(len(movies_ids)):
+                step = (movies_ids[i], people_ids[i])
+                print("Hola")
+                result.append(step)
+            break
+
+        expored_states.add(node.state)
+
+        neighbors = neighbors_for_person(node.state)
+        for movie_id, person_id in neighbors:
+            if person_id not in expored_states and not frontier.contains_state(person_id):
+                child_node = Node(
+                    state=person_id, action=movie_id, parent=node)
+                frontier.add(child_node)
+
+    print(result)
+    if len(result) == 0:
+        return None
+
+    return result
 
 
 def person_id_for_name(name):

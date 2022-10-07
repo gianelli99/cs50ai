@@ -91,36 +91,33 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    states_explored_count = 0
     result = []
-    start_node = Node(state=source, action=None, parent=None)
+    node_with_source = Node(state=source, action=None, parent=None)
     # I need a QueueFrontier because I want the optimal solution
     frontier = QueueFrontier()
-    frontier.add(start_node)
+    frontier.add(node_with_source)
     expored_states = set()
 
     while not frontier.empty():
 
         node = frontier.remove()
-        states_explored_count += 1
 
         # Is this node a goal state?
         if node.state == target:
             # found the solution
-            movies_ids = []
+            movie_ids = []
             people_ids = []
 
             current_node = node
             while current_node.parent is not None:
-                movies_ids.append(current_node.action)
+                movie_ids.append(current_node.action)
                 people_ids.append(current_node.state)
                 current_node = current_node.parent
 
-            movies_ids.reverse()
+            movie_ids.reverse()
             people_ids.reverse()
-            for i in range(len(movies_ids)):
-                step = (movies_ids[i], people_ids[i])
-                print("Hola")
+            for i in range(len(movie_ids)):
+                step = (movie_ids[i], people_ids[i])
                 result.append(step)
             break
 
@@ -133,7 +130,6 @@ def shortest_path(source, target):
                     state=person_id, action=movie_id, parent=node)
                 frontier.add(child_node)
 
-    print(result)
     if len(result) == 0:
         return None
 

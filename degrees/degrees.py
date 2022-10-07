@@ -91,7 +91,6 @@ def shortest_path(source, target):
 
     If no possible path, returns None.
     """
-    result = []
     node_with_source = Node(state=source, action=None, parent=None)
     # I need a QueueFrontier because I want the optimal solution
     frontier = QueueFrontier()
@@ -102,25 +101,7 @@ def shortest_path(source, target):
 
         node = frontier.remove()
 
-        # Is this node a goal state?
-        if node.state == target:
-            # found the solution
-            movie_ids = []
-            people_ids = []
-
-            current_node = node
-            while current_node.parent is not None:
-                movie_ids.append(current_node.action)
-                people_ids.append(current_node.state)
-                current_node = current_node.parent
-
-            movie_ids.reverse()
-            people_ids.reverse()
-            for i in range(len(movie_ids)):
-                step = (movie_ids[i], people_ids[i])
-                result.append(step)
-            break
-
+        # I think this line could be relocated
         expored_states.add(node.state)
 
         neighbors = neighbors_for_person(node.state)
@@ -128,12 +109,41 @@ def shortest_path(source, target):
             if person_id not in expored_states and not frontier.contains_state(person_id):
                 child_node = Node(
                     state=person_id, action=movie_id, parent=node)
+
+                checked_goal_state = goal_test(node=child_node, target=target)
+                if checked_goal_state is not None:
+                    return checked_goal_state
+
                 frontier.add(child_node)
 
-    if len(result) == 0:
+    return None
+
+
+def goal_test(node, target):
+    """
+    Determines whether a given state is a goal state
+    """
+    if node.state != target:
         return None
 
-    return result
+    # found the solution
+    steps = []
+    movie_ids = []
+    people_ids = []
+
+    current_node = node
+    while current_node.parent is not None:
+        movie_ids.append(current_node.action)
+        people_ids.append(current_node.state)
+        current_node = current_node.parent
+
+    movie_ids.reverse()
+    people_ids.reverse()
+    for i in range(len(movie_ids)):
+        step = (movie_ids[i], people_ids[i])
+        steps.append(step)
+
+    return steps
 
 
 def person_id_for_name(name):

@@ -29,7 +29,7 @@ def player(board):
         for j in range(3):
             if board[i][j] is EMPTY:
                 empty_count += 1
-    return empty_count
+    return O if empty_count % 2 == 0 else X
 
 
 def actions(board):

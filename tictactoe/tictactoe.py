@@ -1,7 +1,6 @@
 """
 Tic Tac Toe Player
 """
-
 import math
 import copy
 
@@ -118,4 +117,42 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
-    raise NotImplementedError
+    if terminal(board):
+        return None
+
+    current_player = player(board)
+    if current_player == X:
+        return max_value(board)[1]
+
+    else:
+        return min_value(board)[1]
+
+
+def max_value(board):
+    if terminal(board):
+        return [utility(board), None]
+
+    best_value = -math.inf
+    best_action = tuple()
+    for action in actions(board):
+        partial_best = min_value(result(board, action))[0]
+        if best_value < partial_best:
+            best_value = partial_best
+            best_action = action
+
+    return [best_value, best_action]
+
+
+def min_value(board):
+    if terminal(board):
+        return [utility(board), None]
+
+    best_value = math.inf
+    best_action = tuple()
+    for action in actions(board):
+        partial_best = max_value(result(board, action))[0]
+        if best_value > partial_best:
+            best_value = partial_best
+            best_action = action
+
+    return [best_value, best_action]

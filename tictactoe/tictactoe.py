@@ -117,6 +117,11 @@ def minimax(board):
     """
     Returns the optimal action for the current player on the board.
     """
+    # Another way of improving this algorithm besides alpha-beta pruning is by caching AI responses to some boards.
+    # For example: if AI starts, minimax will call max_value and min_value 551242 times before returning an actions
+    # WHICH is always the same actions. If we cache that anwer (and some more, check test_cache.py) AI will be so fast
+    # json.dumps(initial_board) could be the key and the answer would be (0,1) or the resulting board.
+
     if terminal(board):
         return None
 

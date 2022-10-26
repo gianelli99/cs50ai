@@ -198,7 +198,7 @@ class MinesweeperAI():
             cell_row, cell_col = cell
 
             neighbour_cell = (cell_row + diff_row, cell_col + diff_col)
-            if neighbour_cell[0] < self.height and neighbour_cell[1] < self.width:
+            if 0 <= neighbour_cell[0] < self.height and 0 <= neighbour_cell[1] < self.width:
                 if neighbour_cell in self.mines:
                     found_mines_count += 1
                 elif neighbour_cell not in self.safes:
@@ -210,27 +210,33 @@ class MinesweeperAI():
         while True:
             new_mines_or_safes = False
             knowledge_copy = deepcopy(self.knowledge)
-            for sentence in knowledge_copy:
-                if len(sentence.cells) == sentence.count:
-                    new_mines_or_safes = True
-                    for mine in sentence.cells:
-                        self.mark_mine(mine)
-                if sentence.count == 0:
-                    new_mines_or_safes = True
-                    for safe in sentence.cells:
-                        self.mark_mine(safe)
 
-            self.knowledge = knowledge_copy
+            for sentence in self.knowledge:
+                if len(sentence.cells) == sentence.count and sentence.count != 0:
+                    new_mines_or_safes = True
+
+                    sentence_copy = deepcopy(sentence)
+                    for mine in sentence_copy.cells:
+                        self.mark_mine(mine)
+                if sentence.count == 0 and len(sentence.cells) != 0:
+                    new_mines_or_safes = True
+
+                    sentence_copy = deepcopy(sentence)
+                    for safe in sentence_copy.cells:
+                        self.mark_safe(safe)
 
             new_inferences = []
             for sentence in self.knowledge:
                 for subset_sentence in self.knowledge:
-                    if subset_sentence.cells.issubset(sentence):
+                    if subset_sentence.cells.issubset(sentence.cells) and sentence != subset_sentence and len(subset_sentence.cells) != 0 and len(sentence.cells) != 0:
+                        print(sentence.cells)
+                        print(subset_sentence.cells)
                         new_inferences.append(Sentence(
                             sentence.cells - subset_sentence.cells, sentence.count - subset_sentence.count))
 
             self.knowledge.extend(new_inferences)
-            if len(new_inferences) == 0 and new_mines_or_safes:
+
+            if len(new_inferences) == 0 and not new_mines_or_safes:
                 break
 
     def make_safe_move(self):

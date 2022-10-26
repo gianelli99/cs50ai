@@ -209,7 +209,6 @@ class MinesweeperAI():
 
         while True:
             new_mines_or_safes = False
-            knowledge_copy = deepcopy(self.knowledge)
 
             for sentence in self.knowledge:
                 if len(sentence.cells) == sentence.count and sentence.count != 0:
@@ -229,8 +228,6 @@ class MinesweeperAI():
             for sentence in self.knowledge:
                 for subset_sentence in self.knowledge:
                     if subset_sentence.cells.issubset(sentence.cells) and sentence != subset_sentence and len(subset_sentence.cells) != 0 and len(sentence.cells) != 0:
-                        print(sentence.cells)
-                        print(subset_sentence.cells)
                         new_inferences.append(Sentence(
                             sentence.cells - subset_sentence.cells, sentence.count - subset_sentence.count))
 
